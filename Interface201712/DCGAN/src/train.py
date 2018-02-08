@@ -71,7 +71,7 @@ def train():
             if step % 100 == 0:
                 filename = os.path.join('../data/', "generated_images", '%05d.png' % step)
                 images2save = sess.run(images)
-                save_images(images2save, filename)
+                dcgan.save_images(images2save, filename)
                 print("Generator loss: {} , Discriminator loss: {}".format(g_loss, d_loss))
 
         # (7)学習済みモデルのファイル保存
