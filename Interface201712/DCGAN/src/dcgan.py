@@ -3,6 +3,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import tensorflow as tf
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib as plt
 
 
 class Generator(object):
@@ -205,10 +208,14 @@ class DCGAN(object):
         if inputs is None:
             inputs = self.random_inputs
         images = self.generator.build_network(inputs, training=True)
-        images = tf.image.convert_image_dtype(tf.div(tf.add(images, 1.0), 2.0), tf.uint8)
         images = [image for image in tf.split(images, self.batch_size, axis=0)]
-        rows = []
-        for i in range(row):
-            rows.append(tf.concat(images[col * i + 0:col * i + col], 2))
-        image = tf.concat(rows, 1)
-        return tf.image.encode_jpeg(tf.squeeze(image, [0]))
+
+        return images
+
+    def save_images(self, images, filename):
+        for img in images:
+            plt.subplot(8,8,1)
+            plt.plot(img)
+        plt.save(filename)
+
+    

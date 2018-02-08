@@ -23,8 +23,8 @@ def load_images():
     :return:
     """
     # (1)画像のロード
-    filepaths = glob.glob("../data/input/training/*.jpg") + glob.glob("../data/input/validation/*.jpg") + glob.glob(
-        "../data/input/evaluation/*.jpg")
+    filepaths = glob.glob("../data/input/training/*.npy") + glob.glob("../data/input/validation/*.npy") + glob.glob(
+        "../data/input/evaluation/*.npy")
 
     images = [preprocess_img(filepath=filepath, size=SIZE) for filepath in filepaths];
     print("{0}枚の画像を取り込みました。".format(len(images)))
@@ -70,8 +70,8 @@ def train():
             # 100 stepごとに学習結果を出力する。
             if step % 100 == 0:
                 filename = os.path.join('../data/', "generated_images", '%05d.jpg' % step)
-                with open(filename, 'wb') as f:
-                    f.write(sess.run(images))
+                images2save = sess.run(images)
+                save_images(images2save, filename)
                 print("Generator loss: {} , Discriminator loss: {}".format(g_loss, d_loss))
 
         # (7)学習済みモデルのファイル保存
