@@ -44,7 +44,7 @@ def train():
             generator_layers=[1024, 512, 256, 128],
             discriminator_layer=[64, 128, 256, 512],
             batch_size=batch_size,
-            image_inputs=tf.placeholder(tf.float32, [batch_size, SIZE, SIZE, 3]),
+            image_inputs=tf.placeholder(tf.float32, [batch_size, 1, SIZE, 3]),
         )
         sess.run(tf.global_variables_initializer())
 

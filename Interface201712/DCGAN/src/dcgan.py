@@ -19,25 +19,25 @@ class Generator(object):
         with tf.variable_scope("generator", reuse=self.reuse):
             # (1)入力を変換するレイヤの作成
             with tf.variable_scope("g_first_layer"):
-                outputs = tf.layers.dense(inputs, self.s_size * self.s_size * self.generator_layers[0])
-                outputs = tf.reshape(outputs, shape=(-1, self.s_size, self.s_size, self.generator_layers[0]))
+                outputs = tf.layers.dense(inputs, 1 * self.s_size * self.generator_layers[0])
+                outputs = tf.reshape(outputs, shape=(-1, 1, 1, self.generator_layers[0]))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
             # (2)逆畳み込みレイヤの作成
             with tf.variable_scope("g_dconv1"):
-                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[1], kernel_size=[5, 5],
-                                                     padding="SAME", strides=(2, 2))
+                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[1], kernel_size=[1, 5],
+                                                     padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
             with tf.variable_scope("g_dconv2"):
-                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[2], kernel_size=[5, 5],
-                                                     padding="SAME", strides=(2, 2))
+                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[2], kernel_size=[1, 5],
+                                                     padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
             with tf.variable_scope("g_dconv3"):
-                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[3], kernel_size=[5, 5],
-                                                     padding="SAME", strides=(2, 2))
+                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[3], kernel_size=[1, 5],
+                                                     padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
             with tf.variable_scope("g_dconv4"):
-                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[4], kernel_size=[5, 5],
-                                                     padding="SAME", strides=(2, 2))
+                outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[4], kernel_size=[1, 5],
+                                                     padding="SAME", strides=(1, 2))
                 outputs = tf.nn.tanh(tf.layers.batch_normalization(outputs, training))
 
         self.reuse = True
@@ -68,26 +68,26 @@ class Discriminator(object):
         with tf.variable_scope("discriminator", reuse=self.reuse):
             # (3)畳み込みレイヤの作成
             with tf.variable_scope("d_conv1"):
-                outputs = tf.layers.conv2d(inputs, filters=self.discriminator_layer[0], kernel_size=[5, 5],
-                                           strides=(2, 2),
+                outputs = tf.layers.conv2d(inputs, filters=self.discriminator_layer[0], kernel_size=[1, 5],
+                                           strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training), name="outputs")
             with tf.variable_scope("d_conv2"):
-                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[1], kernel_size=[5, 5],
-                                           strides=(2, 2),
+                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[1], kernel_size=[1, 5],
+                                           strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training), name="outputs")
             with tf.variable_scope("d_conv3"):
-                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[2], kernel_size=[5, 5],
-                                           strides=(2, 2),
+                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[2], kernel_size=[1, 5],
+                                           strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training), name="outputs")
             with tf.variable_scope("d_conv4"):
-                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[3], kernel_size=[5, 5],
-                                           strides=(2, 2),
+                outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[3], kernel_size=[1, 5],
+                                           strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training), name="outputs")
