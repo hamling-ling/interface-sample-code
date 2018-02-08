@@ -69,7 +69,7 @@ def train():
 
             # 100 stepごとに学習結果を出力する。
             if step % 100 == 0:
-                filename = os.path.join('../data/', "generated_images", '%05d.jpg' % step)
+                filename = os.path.join('../data/', "generated_images", '%05d.png' % step)
                 images2save = sess.run(images)
                 save_images(images2save, filename)
                 print("Generator loss: {} , Discriminator loss: {}".format(g_loss, d_loss))
