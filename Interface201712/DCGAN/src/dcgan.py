@@ -23,7 +23,7 @@ class Generator(object):
             # (1)入力を変換するレイヤの作成
             with tf.variable_scope("g_first_layer"):
                 outputs = tf.layers.dense(inputs, 1 * self.s_size * self.generator_layers[0])
-                outputs = tf.reshape(outputs, shape=(-1, 1, 1, self.generator_layers[0]))
+                outputs = tf.reshape(outputs, shape=(-1, 1, self.s_size, self.generator_layers[0]))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
             # (2)逆畳み込みレイヤの作成
             with tf.variable_scope("g_dconv1"):
