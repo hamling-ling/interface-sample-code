@@ -14,4 +14,6 @@ def preprocess_img(filepath, size):
     """
     # (2)画像の前処理
     # 画像の縦横を引数のsizeの大きさにリサイズし、輝度を0～1の範囲から-1～1に変更
-    return np.load(filepath)
+    data = np.load(filepath)
+    data = data.reshape(1,len(data),1)
+    return data
