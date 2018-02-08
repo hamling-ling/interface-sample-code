@@ -11,7 +11,7 @@ class Generator(object):
     """
 
     def __init__(self, generator_layers, s_size):
-        self.generator_layers = generator_layers + [3]
+        self.generator_layers = generator_layers + [1]
         self.s_size = s_size
         self.reuse = False
 
