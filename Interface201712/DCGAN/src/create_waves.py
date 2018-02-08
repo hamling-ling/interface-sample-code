@@ -3,6 +3,7 @@ import tensorflow as tf
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
+import os
 
 wave_num=10*1000
 sz=64
@@ -25,6 +26,13 @@ def outputWave(path):
 
 out_train="../data/input/training"
 out_validation = "../data/input/validation"
+out_evaluation = "../data/input/evaluation"
+
+os.makedirs("../data/input", exist_ok=True)
+os.makedirs(out_train, exist_ok=True)
+os.makedirs(out_validation, exist_ok=True)
+os.makedirs(out_evaluation, exist_ok=True)
 
 outputWave(out_train)
 outputWave(out_validation)
+outputWave(out_evaluation)
