@@ -213,9 +213,11 @@ class DCGAN(object):
         return images
 
     def save_images(self, images, filename):
+        plt.clf()
         for i in range(len(images)):
             plt.subplot(8,8,i+1)
             plt.plot(images[i].reshape(len(images)))
         plt.savefig(filename)
+        plt.clf()
 
     
