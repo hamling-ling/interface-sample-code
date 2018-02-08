@@ -22,7 +22,7 @@ def test(filepath):
             generator_layers=[1024, 512, 256, 128],
             discriminator_layer=[64, 128, 256, 512],
             batch_size=batch_size,
-            image_inputs=tf.placeholder(tf.float32, [batch_size, SIZE, SIZE, 3]),
+            image_inputs=tf.placeholder(tf.float32, [batch_size, 1, SIZE, 1]),
         )
         sess.run(tf.global_variables_initializer())
         g_saver = tf.train.Saver(dcgan.generator.variables)
@@ -33,13 +33,12 @@ def test(filepath):
         # (2)画像の生成
         sample_z = tf.random_uniform([dcgan.batch_size, dcgan.z_dim], minval=-1.0, maxval=1.0)
         images = dcgan.sample_images(8, 8, inputs=sample_z)
-        with open(filepath, 'wb') as f:
-            f.write(sess.run(images))
-
+        images2save = sess.run(images)
+        dcgan.save_images(images2save, filepath)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", default="image.jpg")
+    parser.add_argument("-o", "--output", default="image.png")
 
     args = parser.parse_args()
 
