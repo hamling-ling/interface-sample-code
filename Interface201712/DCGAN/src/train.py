@@ -23,8 +23,9 @@ def load_images():
     :return:
     """
     # (1)画像のロード
-    filepaths = glob.glob("../data/input/training/*.jpg") + glob.glob("../data/input/validation/*.jpg") + glob.glob(
-        "../data/input/evaluation/*.jpg")
+    filepaths = glob.glob("../data/input/training/*.jpg") \
+    + glob.glob("../data/input/validation/*.jpg") \
+    + glob.glob("../data/input/evaluation/*.jpg")
 
     images = [preprocess_img(filepath=filepath, size=SIZE) for filepath in filepaths];
     print("{0}枚の画像を取り込みました。".format(len(images)))
