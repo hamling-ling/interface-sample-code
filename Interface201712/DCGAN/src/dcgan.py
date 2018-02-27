@@ -183,10 +183,12 @@ class DCGAN(object):
         :return: None
         """
         # (10)最適化手法の定義
-        generator_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta)
-        discriminator_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta)
-        g_minimize = generator_opt.minimize(self.g_loss, var_list=self.generator.variables)
-        d_minimize = discriminator_opt.minimize(self.d_loss, var_list=self.discriminator.variables)
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        with tf.control_dependencies(update_ops):
+            generator_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta)
+            discriminator_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta)
+            g_minimize = generator_opt.minimize(self.g_loss, var_list=self.generator.variables)
+            d_minimize = discriminator_opt.minimize(self.d_loss, var_list=self.discriminator.variables)
 
         self.g_minimize = g_minimize
         self.d_minimize = d_minimize
