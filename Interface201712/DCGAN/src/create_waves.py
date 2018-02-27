@@ -21,8 +21,14 @@ def outputWave(path):
         waves=sess.run(g)
 
         for i in range(len(waves)):
-            fn = "{0}/{1:0>8}.npy".format(path, i)
+            fn = "{0}/{1:0>4}.npy".format(path, i)
             np.save(fn, waves[i])
+
+            fn_d = "{0}/{1:0>8}_d.npy".format(path,i)
+            np.save(fn_d, distortion(waves[i]))
+
+def distortion(x):
+    return np.sign(x)*(1-np.exp(-np.abs(x*8)))
 
 out_train="../data/input/training"
 out_validation = "../data/input/validation"
