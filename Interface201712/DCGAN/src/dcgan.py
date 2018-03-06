@@ -111,13 +111,14 @@ class DCGAN(object):
     DCGANを定義するソースコード
     """
 
-    def __init__(self, discriminator_layer=[], generator_layers=[], batch_size=64, image_inputs=None):
+    def __init__(self, discriminator_layer=[], generator_layers=[], batch_size=64, image_inputs=None, noise_inputs=None):
         """
 
         :param discriminator_layer: 識別機のレイヤを定義する
         :param generator_layers: 生成器のレイヤを定義する
         :param batch_size: バッチサイズ
-        :param inputs: 入力
+        :param image_inputs: 教師画像
+        :param noise_inputs: 元画像
         """
         # (5)クラスの初期化
         self.generator = Generator(
@@ -129,8 +130,8 @@ class DCGAN(object):
             discriminator_layer
         )
         self.batch_size = batch_size
-        self.z_dim = 100
-        self.random_inputs = tf.random_uniform((self.batch_size, self.z_dim), minval=-1.0, maxval=1.0)
+        self.z_dim = 64
+        self.random_inputs = noise_inputs
         self.image_inputs = image_inputs
         self.build_loss_network()
         self.optimize()
@@ -193,7 +194,7 @@ class DCGAN(object):
         self.g_minimize = g_minimize
         self.d_minimize = d_minimize
 
-    def fit_step(self, sess, image_inputs):
+    def fit_step(self, sess, image_inputs, noise_inputs):
         """
         1 stepごとに学習する
 
@@ -202,8 +203,8 @@ class DCGAN(object):
         :return: generatorの誤差、識別機の誤差、TensorFlowのサマリ結果
         """
         # (11)1ステップ分の処理
-        _, gloss = sess.run([self.g_minimize, self.g_loss], feed_dict={self.image_inputs: image_inputs})
-        _, dloss = sess.run([self.d_minimize, self.d_loss], feed_dict={self.image_inputs: image_inputs})
+        _, gloss = sess.run([self.g_minimize, self.g_loss], feed_dict={self.image_inputs: image_inputs, self.noise_inputs: noise_inputs})
+        _, dloss = sess.run([self.d_minimize, self.d_loss], feed_dict={self.image_inputs: image_inputs, self.noise_inputs: noise_inputs})
         return gloss, dloss
 
     def sample_images(self, row=8, col=8, inputs=None):
