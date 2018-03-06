@@ -24,7 +24,7 @@ def outputWave(path):
             fn = "{0}/{1:0>4}.npy".format(path, i)
             np.save(fn, waves[i])
 
-            fn_d = "{0}/{1:0>8}_d.npy".format(path,i)
+            fn_d = "{0}/{1:0>4}_d.npy".format(path,i)
             np.save(fn_d, distortion(waves[i]))
 
 def distortion(x):
