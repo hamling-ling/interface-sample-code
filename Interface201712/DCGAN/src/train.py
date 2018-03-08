@@ -30,6 +30,7 @@ def load_images(img_type, is_distortion):
     else:
         d = ""
     filepaths = glob.glob("../data/input/{0}/*[0-9]{1}.npy".format(img_type, d))
+    filepaths.sort()
 
     images = [preprocess_img(filepath=filepath, size=SIZE) for filepath in filepaths];
     print("{0}枚の画像を取り込みました。".format(len(images)))
