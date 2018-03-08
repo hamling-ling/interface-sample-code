@@ -9,7 +9,10 @@ import numpy as np
 import tensorflow as tf
 from dcgan import DCGAN
 
-matplotlib.use("Agg")
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+
 import glob
 from util import preprocess_img
 
@@ -36,6 +39,15 @@ def load_images(img_type, is_distortion):
     print("{0}枚の画像を取り込みました。".format(len(images)))
     return np.array(images, dtype=np.float32)
 
+def save_images(source_images, generated_images, filename):
+    plt.clf()
+    for i in range(len(generated_images)):
+        plt.subplot(8,8,i+1)
+        plt.plot(source_images[i].reshape(len(source_images)))
+        plt.plot(generated_images[i].reshape(len(generated_images)))
+        plt.savefig(filename)
+    plt.clf()
+
 def train():
     """
     学習データを構築する。
@@ -43,7 +55,7 @@ def train():
     # 画像をデータセットから読み込む
     imgs = load_images(IMG_DIR_TRAIN, is_distortion=True)
     noises = load_images(IMG_DIR_TRAIN, is_distortion=False)
-    
+
     with tf.Session() as sess:
         # (3)DCGANネットワークの生成
         batch_size = 64
@@ -69,6 +81,8 @@ def train():
 
         os.makedirs('../data/generated_images/', exist_ok=True)
 
+        save_images(noises[:64], imgs[:64], "../data/generated_images/teacher.png")
+
         # (6)学習
         for step in range(maxstep):
             permutation = np.random.permutation(N)
@@ -80,7 +94,7 @@ def train():
             if step % 100 == 0:
                 filename = os.path.join('../data/', "generated_images", '%05d.png' % step)
                 images2save = sess.run(images)
-                dcgan.save_images(sample_z, images2save, filename)
+                save_images(sample_z, images2save, filename)
                 print("Generator loss: {} , Discriminator loss: {}".format(g_loss, d_loss))
 
         # (7)学習済みモデルのファイル保存

@@ -4,10 +4,7 @@ from __future__ import unicode_literals
 
 import tensorflow as tf
 import matplotlib as mpl
-mpl.use('Agg')
-import matplotlib.pyplot as plt
 import numpy as np
-
 
 class Generator(object):
     """
@@ -218,12 +215,3 @@ class DCGAN(object):
 
         return images
 
-    def save_images(self, images, filename):
-        plt.clf()
-        for i in range(len(images)):
-            plt.subplot(8,8,i+1)
-            plt.plot(images[i].reshape(len(images)))
-        plt.savefig(filename)
-        plt.clf()
-
-    
