@@ -23,6 +23,8 @@ class Generator(object):
         with tf.variable_scope("generator", reuse=self.reuse):
             # (1)入力を変換するレイヤの作成
             with tf.variable_scope("g_first_layer"):
+                batch_size=inputs.shape[0]
+                inputs = tf.reshape(inputs, shape=(batch_size, -1))
                 outputs = tf.layers.dense(inputs, 1 * self.s_size * self.generator_layers[0])
                 outputs = tf.reshape(outputs, shape=(-1, 1, self.s_size, self.generator_layers[0]))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training))
@@ -131,7 +133,7 @@ class DCGAN(object):
         )
         self.batch_size = batch_size
         self.z_dim = 64
-        self.random_inputs = noise_inputs
+        self.noise_inputs = noise_inputs
         self.image_inputs = image_inputs
         self.build_loss_network()
         self.optimize()
@@ -144,7 +146,7 @@ class DCGAN(object):
         :return: 誤差
         """
         # (6)画像生成用ネットワークの作成
-        generate_output = self.generator.build_network(self.random_inputs, training=True)
+        generate_output = self.generator.build_network(self.noise_inputs, training=True)
         discriminator_output = self.discriminator.build_network(generate_output, training=True)
 
         # (7)画像学習用ネットワークの作成
@@ -210,7 +212,7 @@ class DCGAN(object):
     def sample_images(self, row=8, col=8, inputs=None):
         # (12)サンプル出力の処理
         if inputs is None:
-            inputs = self.random_inputs
+            inputs = self.noise_inputs
         images = self.generator.build_network(inputs, training=True)
         images = [image for image in tf.split(images, self.batch_size, axis=0)]
 
