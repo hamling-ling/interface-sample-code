@@ -43,8 +43,8 @@ def save_images(source_images, generated_images, filename):
     plt.clf()
     for i in range(len(generated_images)):
         plt.subplot(8,8,i+1)
-        plt.plot(source_images[i].reshape(len(source_images)))
-        plt.plot(generated_images[i].reshape(len(generated_images)))
+        plt.plot(source_images[i].reshape(-1))
+        plt.plot(generated_images[i].reshape(-1))
         plt.savefig(filename)
     plt.clf()
 
