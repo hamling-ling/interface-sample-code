@@ -6,6 +6,7 @@ import tensorflow as tf
 import matplotlib as mpl
 import numpy as np
 
+
 class Generator(object):
     """
     GANの生成器を定義する。
@@ -22,26 +23,32 @@ class Generator(object):
             with tf.variable_scope("g_first_layer"):
                 batch_size=inputs.shape[0]
                 inputs = tf.reshape(inputs, shape=(batch_size, -1))
+                print("#g0 inputs.shape={0}".format(inputs.shape))
                 outputs = tf.layers.dense(inputs, 1 * self.s_size * self.generator_layers[0])
                 outputs = tf.reshape(outputs, shape=(-1, 1, self.s_size, self.generator_layers[0]))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training, axis=3))
+                print("#g0 outputs.shape={0}".format(outputs.shape))
             # (2)逆畳み込みレイヤの作成
             with tf.variable_scope("g_dconv1"):
                 outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[1], kernel_size=[1, 5],
                                                      padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training, axis=3))
+                print("#g1 outputs.shape={0}".format(outputs.shape))
             with tf.variable_scope("g_dconv2"):
                 outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[2], kernel_size=[1, 5],
                                                      padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training, axis=3))
+                print("#g1 outputs.shape={0}".format(outputs.shape))
             with tf.variable_scope("g_dconv3"):
                 outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[3], kernel_size=[1, 5],
                                                      padding="SAME", strides=(1, 2))
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training, axis=3))
+                print("#g1 outputs.shape={0}".format(outputs.shape))
             with tf.variable_scope("g_dconv4"):
                 outputs = tf.layers.conv2d_transpose(outputs, filters=self.generator_layers[4], kernel_size=[1, 5],
                                                      padding="SAME", strides=(1, 2))
                 outputs = tf.nn.tanh(tf.layers.batch_normalization(outputs, training=training, axis=3))
+                print("#g1 outputs.shape={0}".format(outputs.shape))
 
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='generator')
@@ -71,24 +78,29 @@ class Discriminator(object):
         with tf.variable_scope("discriminator", reuse=self.reuse):
             # (3)畳み込みレイヤの作成
             with tf.variable_scope("d_conv1"):
+                print("#d0 inputs.shape={0}".format(inputs.shape))
                 outputs = tf.layers.conv2d(inputs, filters=self.discriminator_layer[0], kernel_size=[1, 5],
                                            strides=(1, 2),
                                            padding='SAME')
+                print("#d0 outputs.shape={0}".format(outputs.shape))
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training=training, axis=3), name="outputs")
             with tf.variable_scope("d_conv2"):
+                print("#d1 outputs.shape={0}".format(outputs.shape))
                 outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[1], kernel_size=[1, 5],
                                            strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training=training, axis=3), name="outputs")
             with tf.variable_scope("d_conv3"):
+                print("#d2 outputs.shape={0}".format(outputs.shape))
                 outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[2], kernel_size=[1, 5],
                                            strides=(1, 2),
                                            padding='SAME')
                 # outputs = tf.nn.elu(tf.layers.batch_normalization(outputs, training))
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training=training, axis=3), name="outputs")
             with tf.variable_scope("d_conv4"):
+                print("#d3 outputs.shape={0}".format(outputs.shape))
                 outputs = tf.layers.conv2d(outputs, filters=self.discriminator_layer[3], kernel_size=[1, 5],
                                            strides=(1, 2),
                                            padding='SAME')
@@ -96,7 +108,10 @@ class Discriminator(object):
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training=training, axis=3), name="outputs")
             with tf.variable_scope('classify'):
                 batch_size = outputs.get_shape()[0].value
+                print("batch_size={0}".format(batch_size))
+                print("#d4 outputs.shape={0}".format(outputs.shape))
                 reshape = tf.reshape(outputs, [batch_size, -1])
+                print("#d5 reshape.shape={0}".format(reshape.shape))
                 outputs = tf.layers.dense(reshape, 2, name='outputs')
 
         # (4)reuseの設定
@@ -110,7 +125,7 @@ class DCGAN(object):
     DCGANを定義するソースコード
     """
 
-    def __init__(self, discriminator_layer=[], generator_layers=[], batch_size=64, image_inputs=None, noise_inputs=None):
+    def __init__(self, discriminator_layer=[], generator_layers=[], data_size=1024, batch_size=64, image_inputs=None, noise_inputs=None):
         """
 
         :param discriminator_layer: 識別機のレイヤを定義する
@@ -122,14 +137,14 @@ class DCGAN(object):
         # (5)クラスの初期化
         self.generator = Generator(
             generator_layers,
-            s_size=4
+            s_size=64
         )
 
         self.discriminator = Discriminator(
             discriminator_layer
         )
         self.batch_size = batch_size
-        self.z_dim = 64
+        self.z_dim = data_size
         self.noise_inputs = noise_inputs
         self.image_inputs = image_inputs
         self.build_loss_network()

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import glob
 from util import preprocess_img
 
-SIZE = 64
+SIZE = 1024
 
 IMG_DIR_TRAIN="training"
 IMG_DIR_EVAL="evaluation"
